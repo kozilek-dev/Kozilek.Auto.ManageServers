@@ -12,12 +12,26 @@ class _IMinecraftServer(ABC):
     def name(self) -> str:
         pass
 
+    @name.setter
+    def name(self, value) -> None:
+        pass
+
     @property
     @abstractmethod
     def port(self) -> int:
         pass
 
+    @port.setter
+    @abstractmethod
+    def port(self, value) -> int:
+        pass
+
     @property
     @abstractmethod
-    def options(self) -> int:
+    def options(self) -> dict:
+        pass
+
+    @options.setter
+    @abstractmethod
+    def options(self, value) -> None:
         pass

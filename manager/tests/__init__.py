@@ -1,1 +1,1 @@
-from . import main
+from . import manager_test

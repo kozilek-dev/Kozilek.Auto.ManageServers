@@ -1,0 +1,11 @@
+*.pyc
+*.tar
+*.tar.gz
+*.zip
+*.log
+*.env
+.idea/
+.vs/
+.vscode/
+venv/
+worlds/

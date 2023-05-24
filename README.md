@@ -3,18 +3,19 @@
 ### Instalar dependências
 
 ```commandline
-pip install docker
+pip install -r requirements.txt
 ```
 
-### Como rodar
+### Como rodar a API
+> Rode a partir da raíz do projeto
 
 ```commandline
-python main.py
+uvicorn api.main:app --reload
 ```
 
 
 ### Como testar
 
 ```commandline
-python -m unittest manager/tests/main.py
+python -m unittest manager/tests/manager_test.py
 ```

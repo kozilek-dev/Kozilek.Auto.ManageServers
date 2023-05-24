@@ -1,0 +1,5 @@
+docker
+python-dotenv
+pylint
+azure-storage-blob
+fastapi[all]
