@@ -1,68 +1,105 @@
+"""
+Interface para um container, da biblioteca Python Docker SDK
+"""
+
 from abc import ABC, abstractmethod
 from typing import Optional
 
 class IContainer(ABC):
+    """
+    Interface para um container, da biblioteca Python Docker SDK
+    """
     @property
     @abstractmethod
     def id(self):
-        pass
+        """
+        Id do container
+        """
 
     @property
     @abstractmethod
     def name(self):
-        pass
+        """
+        Nome do container
+        """
 
     @property
     @abstractmethod
     def status(self):
-        pass
+        """
+        Status do container
+        """
 
     @property
     @abstractmethod
     def ports(self):
-        pass
+        """
+        Portas do container
+        """
 
     @property
     @abstractmethod
     def attrs(self):
-        pass
+        """
+        Atributos do container
+        """
 
     @abstractmethod
     def remove(self, **kwargs):
-        pass
+        """
+        Remove o container
+        """
 
     @abstractmethod
     def start(self):
-        pass
+        """
+        Inicia o container
+        """
 
     @abstractmethod
     def stop(self):
-        pass
+        """
+        Para o container
+        """
 
     @abstractmethod
     def restart(self):
-        pass
+        """
+        Reinicia o container
+        """
 
     @abstractmethod
     def get_archive(self, path: str):
-        pass
+        """
+        Retorna um arquivo do container
+        """
 
     @abstractmethod
     def put_archive(self, path: str, data):
-        pass
+        """
+        Envia um arquivo para o container
+        """
 
     @abstractmethod
     def exec_run(self, command: str, environment: Optional[dict]):
-        pass
+        """
+        Executa um comando no container
+        """
 
     @abstractmethod
     def logs(self):
-        pass
+        """
+        Retorna os logs do container
+        """
 
     @abstractmethod
     def kill(self):
-        pass
+        """
+        Encerra o container
+        """
 
     @abstractmethod
     def reload(self):
-        pass
+        """
+        Recarrega o status do container
+        """

@@ -1,3 +1,6 @@
+"""
+Interface para um servidor de Minecraft
+"""
 from abc import ABC, abstractmethod
 
 
@@ -5,33 +8,47 @@ class _IMinecraftServer(ABC):
     @property
     @abstractmethod
     def base_image(self) -> str:
-        pass
+        """
+        Imagem base do servidor
+        """
 
     @property
     @abstractmethod
     def name(self) -> str:
-        pass
+        """
+        Nome do servidor
+        """
 
     @name.setter
     def name(self, value) -> None:
-        pass
+        """
+        Nome do servidor
+        """
 
     @property
     @abstractmethod
     def port(self) -> int:
-        pass
+        """
+        Porta do servidor
+        """
 
     @port.setter
     @abstractmethod
     def port(self, value) -> int:
-        pass
+        """
+        Porta do servidor
+        """
 
     @property
     @abstractmethod
     def options(self) -> dict:
-        pass
+        """
+        Opções do servidor
+        """
 
     @options.setter
     @abstractmethod
     def options(self, value) -> None:
-        pass
+        """
+        Opções do servidor
+        """

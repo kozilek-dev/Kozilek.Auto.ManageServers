@@ -1,13 +1,19 @@
+"""
+Módulo responsável por realizar o upload e download de arquivos no Azure Storage
+"""
 import logging
-from azure.storage.blob import BlobServiceClient, ContainerClient, BlobType, StorageStreamDownloader
-from dotenv import load_dotenv
 from os import getenv
 from typing import Optional
+from azure.storage.blob import BlobServiceClient, ContainerClient, BlobType
+from dotenv import load_dotenv
 
 load_dotenv()
 
 
 class Storage:
+    """
+    Classe responsável por realizar o upload e download de arquivos no Azure Storage
+    """
     __instance: Optional[ContainerClient] = None
     __connection_string: str = getenv('ST_CONNSTRING')
     __default_container: str = getenv('ST_CONTAINER_NAME')
@@ -40,7 +46,9 @@ class Storage:
         """
         try:
             logging.info('Realizando upload do arquivo %s', filename)
-            response = self.__instance.upload_blob(filename, data, BlobType.BLOCKBLOB, metadata={'servidor': filename}, overwrite=True)
+            response = self.__instance.upload_blob(filename, data, BlobType.BLOCKBLOB,
+                                                   metadata={'servidor': filename},
+                                                   overwrite=True)
             return response is not None
         except Exception as e:
             logging.error('Erro capturado %s', str(e))

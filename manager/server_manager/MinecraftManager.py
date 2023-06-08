@@ -1,11 +1,13 @@
+"""
+MinecraftManager.py: Classe responsável por gerenciar os servidores<T>
+"""
 import logging
-import os
 from os import getenv
+from functools import lru_cache
+from random import randint
+from time import sleep
 from docker import DockerClient
 from dotenv import load_dotenv
-from time import sleep
-from random import randint
-from functools import lru_cache
 from ..storage import Storage
 from .IMinecraftServer import _IMinecraftServer
 from .IContainer import IContainer
@@ -21,7 +23,7 @@ logging.basicConfig(
 )
 
 
-class MinecraftManager(object):
+class MinecraftManager:
     """
     Classe responsável por gerenciar os servidores
     """
@@ -90,27 +92,27 @@ class MinecraftManager(object):
             port = randint(19132, 29132)
         logging.info('Porta gerada %d', port)
         return port
-    
+
     def __is_running(self, container: IContainer) -> bool:
         """
         Checa se o container está rodando
         """
         container.reload()
-        return container.status == 'running' or container.status == 'created'
-    
+        return container.status in ('running','created')
+
     def __is_stopped(self, container: IContainer) -> bool:
         """
         Checa se o container está parado
         """
         container.reload()
-        return container.status == 'exited' or container.status == 'created'
-    
+        return container.status in ('exited', 'created')
+
     def __exist_container(self, container: IContainer) -> bool:
         """
         Checa se o container existe
         """
         return container is not None
-    
+
     def get_server_port(self, container: IContainer) -> int:
         """
         Retorna a porta do servidor
@@ -147,12 +149,15 @@ class MinecraftManager(object):
         except Exception as exception:
             if NAME_ALREADY_IN_USE in str(exception):
                 logging.info('O nome %s já está em uso, recuperando container', server.name)
-                return self.get_server(server.name)
+                server = self.get_server(server.name)
+                return server
 
             if PORT_ALREADY_IN_USE in str(exception):
                 logging.error('A porta %d já está em uso', server.port)
+                return None
 
             logging.error(str(exception))
+            return None
 
     def get_servers_running(self) -> list:
         """
@@ -207,10 +212,12 @@ class MinecraftManager(object):
             logging.info('Iniciando container com id %s', container.id)
             container.start()
             return True
-        elif container.status == 'running':
+
+        if container.status == 'running':
             return True
+
         return False
-    
+
     def restart_server(self, container: IContainer) -> bool:
         """
         Reinicia um servidor
@@ -259,9 +266,13 @@ class MinecraftManager(object):
         logging.info('Executando comando %s no servidor %s', command, container.name)
         container.exec_run(command)
         return self.get_last_log(container)
-    
-    def set_server_property(self, container: IContainer, property: str, value: str):
-        exit_code, output = container.exec_run(f'send-command say {property} definida para {value}', environment=[f'{property}={value}'])
+
+    def set_server_property(self, container: IContainer, prop: str, value: str):
+        """
+        Define uma propriedade do servidor
+        """
+        exit_code, output = container.exec_run(f'send-command say {prop} definida para {value}',
+                                               environment=[f'{prop}={value}'])
         logging.info(output)
         logging.info(exit_code)
         self.restart_server(container)
@@ -292,25 +303,28 @@ class MinecraftManager(object):
         """
         Copy volume data to storage
         """
-        logging.info(f'Realizando backup do {container.name}')
+        name = container.name
+        logging.info('Realizando backup do %s', name)
         self.run_command(container, f'say Realizando backup do {container.name}')
         data, stats = container.get_archive('/data/worlds/')
+        logging.info(stats)
         backup_filename = f'{container.name}.tar'
 
         self.__storage.upload(backup_filename, data)
-        logging.info(f'Backup realizado do servidor {container.name}')
+        logging.info('Backup realizado do servidor %s', name)
         return backup_filename
 
     def restore_server(self, container: IContainer, backup_id: str) -> bool:
         """
         Copy storage data to volume
         """
-        logging.info(f'Restaurando servidor {container.name} a partir do backup')
+        name = container.name
+        logging.info('Restaurando servidor %s a partir do backup', name)
         self.run_command(container, f'say Restaurando servidor {container.name} a partir do backup')
         data = self.__storage.download(backup_id)
 
         response = container.put_archive('/data/', data)
-        logging.info(f'Servidor {container.name} restaurado')
+        logging.info('Servidor %s restaurado', name)
         return response
 
     def is_healthy(self, container: IContainer) -> bool:
@@ -339,8 +353,8 @@ class MinecraftManager(object):
             is_healthy = self.is_healthy(container)
             current_iteration += 1
             sleep(10)
-
-        logging.info('Servidor %s está saudável e pronto para jogar!', (container.name, address, port))
+        logging.info('Servidor %s está saudável e pronto para jogar!', (container.name,
+                                                                        address, port))
         return True
 
     def get_all_worlds(self, container: IContainer) -> list[str]:

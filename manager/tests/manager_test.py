@@ -1,15 +1,25 @@
-from manager import server_manager
+"""
+Esse arquivo contém os testes unitários para o módulo manager
+"""
 from unittest import TestCase
+from manager import server_manager
 
 
 class ManagerTests(TestCase):
+    """
+    Classe de testes para o módulo manager
+    """
     __manager = server_manager.MinecraftManager()
     __default_port = 9999
     __default_options = {'EULA': 'TRUE'}
     __default_name = 'mc-unitest'
 
     def test_create_server(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a criação de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
         self.__manager.delete_server(container)
@@ -17,7 +27,11 @@ class ManagerTests(TestCase):
         self.assertEqual('created', container.status)
 
     def test_stop_server(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a parada de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
         response = self.__manager.stop_server(container)
@@ -27,7 +41,11 @@ class ManagerTests(TestCase):
         self.assertEqual(True, response)
 
     def test_start_server(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a inicialização de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
         self.__manager.stop_server(container)
 
@@ -37,7 +55,11 @@ class ManagerTests(TestCase):
         self.assertEqual(True, response)
 
     def test_restart_server(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa o reinício de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
         self.__manager.stop_server(container)
 
@@ -47,7 +69,11 @@ class ManagerTests(TestCase):
         self.assertEqual(True, response)
 
     def test_delete_server(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a remoção de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
         response = self.__manager.delete_server(container)
@@ -55,7 +81,11 @@ class ManagerTests(TestCase):
         self.assertEqual(True, response)
 
     def test_delete_all_servers(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a remoção de todos os servidores
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         self.__manager.create_server(mc_server)
 
         self.__manager.delete_all_servers()
@@ -65,8 +95,12 @@ class ManagerTests(TestCase):
         self.assertEqual(0, len(response))
 
     def test_get_server(self):
+        """
+        Testa a obtenção de um servidor
+        """
         expected_name = 'mc-unitest'
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         self.__manager.create_server(mc_server)
 
         response = self.__manager.get_server(mc_server.name)
@@ -74,7 +108,11 @@ class ManagerTests(TestCase):
         self.assertEqual(expected_name, response.name)
 
     def test_list_servers(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a listagem de servidores
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
         response = self.__manager.get_servers_running()
@@ -84,7 +122,11 @@ class ManagerTests(TestCase):
         self.assertIsInstance(response, list)
 
     def test_get_logs(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a obtenção dos logs de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
         response = self.__manager.get_logs(container)
@@ -94,7 +136,11 @@ class ManagerTests(TestCase):
         self.assertIsInstance(response, list)
 
     def test_get_last_log(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a obtenção do último log de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
         response = self.__manager.get_last_log(container)
@@ -104,7 +150,11 @@ class ManagerTests(TestCase):
         self.assertIsInstance(response, str)
 
     def test_run_command(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a execução de um comando em um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
 
@@ -117,7 +167,11 @@ class ManagerTests(TestCase):
         self.assertEqual('Unable to summon object', response)
 
     def test_is_healthy(self):
-        mc_server = server_manager.MinecraftBedRockServer(self.__default_name, self.__default_options)
+        """
+        Testa a verificação de saúde de um servidor
+        """
+        mc_server = server_manager.MinecraftBedRockServer(self.__default_name,
+                                                          self.__default_options)
         container = self.__manager.create_server(mc_server)
 
         response = self.__manager.is_healthy(container)
