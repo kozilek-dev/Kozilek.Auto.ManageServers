@@ -76,6 +76,22 @@ async def get(name: str):
             'saudavel': universal_manager.is_healthy(container),
             'executado_em': get_now()
         }, 200)
+
+@router.get("/{name}/desempenho")
+async def get_performance(name: str):
+    container = universal_manager.get_server(name)
+    performance_stats = universal_manager.get_performance_stats(container)
+
+    if container is None:
+        return JSONResponse({
+            'resposta': 'Servidor não encontrado', 
+            'executado_em': get_now()
+        }, 404)
+    
+    
+
+    return JSONResponse(performance_stats, 200)
+
     
 @router.delete("/{name}")
 async def delete(name: str, background_tasks: BackgroundTasks):

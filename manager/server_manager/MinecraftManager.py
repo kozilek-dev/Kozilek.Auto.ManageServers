@@ -370,8 +370,11 @@ class MinecraftManager:
         """
         Retorna o status do servidor
         """
-        container.reload()
-        return container.attrs['State']['Health']['Status'] == 'healthy'
+        try:
+            container.reload()
+            return container.attrs['State']['Health']['Status'] == 'healthy'
+        except KeyError:
+            return False
 
     def wait_for_healthy(self, container: IContainer) -> bool:
         """
@@ -446,3 +449,37 @@ class MinecraftManager:
 
         created_server = self.create_server(server)
         return created_server is not None
+
+    def get_performance_stats(self, container: IContainer) -> dict:
+        """
+        Retorna as estatísticas de performance do servidor
+        """
+        if not self.__exist_container(container):
+            logging.error('Servidor não existe')
+            return None
+
+        if not self.__is_running(container):
+            logging.error('Servidor não está rodando')
+            return None
+
+        stats = container.stats(stream=False)
+
+        cpu_usage = stats['cpu_stats']['cpu_usage']['total_usage']
+        system_cpu_usage = stats['cpu_stats']['system_cpu_usage']
+        memory_usage = stats['memory_stats']['usage']
+        network_usage = stats['networks']['eth0']['rx_bytes']
+        risk = 0
+
+        cpu_percent = cpu_usage / system_cpu_usage * 100
+        memory_percent = memory_usage / stats['memory_stats']['limit'] * 100
+
+        risk = (1.7 * max(0, cpu_percent - 45) + 1 * max(0, memory_percent - 50) / (1.7 + 1))
+
+        logging.info('Estatísticas de performance do servidor %s', container.name)
+
+        return {
+            'cpu_percent': float('{:.2f}'.format(cpu_percent)),
+            'memory_percent': float('{:.2f}'.format(memory_percent)),
+            'saudavel': self.is_healthy(container),
+            'risco': float('{:.2f}'.format(risk)),
+        }
