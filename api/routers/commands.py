@@ -32,8 +32,7 @@ class PropertyRequest(BaseModel):
 
 @router.post('/')
 async def run_command(command_request: CommandRequest):
-    server = MinecraftBedRockServer(command_request.servidor)
-    container = universal_manager.create_server(server)
+    container = universal_manager.get_server(command_request.servidor)
     response = universal_manager.run_command(container, command_request.comando)
     return JSONResponse(
         {
@@ -43,8 +42,7 @@ async def run_command(command_request: CommandRequest):
 
 @router.post('/sem-resposta')
 async def run_command_without_response(command_request: CommandRequest, background_tasks: BackgroundTasks):
-    server = MinecraftBedRockServer(command_request.servidor)
-    container = universal_manager.create_server(server)
+    container = universal_manager.get_server(command_request.servidor)
     background_tasks.add_task(universal_manager.run_command, container, command_request.comando)
     return JSONResponse({
             'resposta': 'Comando executado', 
@@ -53,8 +51,7 @@ async def run_command_without_response(command_request: CommandRequest, backgrou
 
 @router.put('/propriedades')
 async def set_property(command_request: PropertyRequest, background_tasks: BackgroundTasks):
-    server = MinecraftBedRockServer(command_request.servidor)
-    container = universal_manager.create_server(server)
+    container = universal_manager.get_server(command_request.servidor)
     background_tasks.add_task(universal_manager.set_server_property, container, command_request.propriedade, command_request.valor)
     return JSONResponse({
             'resposta': f'Propriedade {command_request.propriedade} definida para {command_request.valor}', 

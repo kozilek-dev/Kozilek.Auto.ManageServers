@@ -10,6 +10,7 @@ from docker import DockerClient
 from dotenv import load_dotenv
 from ..storage import Storage
 from .IMinecraftServer import _IMinecraftServer
+from .MinecraftBedRockServer import MinecraftBedRockServer
 from .IContainer import IContainer
 from .errors import PORT_ALREADY_IN_USE, NAME_ALREADY_IN_USE
 
@@ -33,6 +34,21 @@ class MinecraftManager:
         self.__host = getenv('DOCKER_HOST')
         self.__docker_instance: DockerClient = DockerClient(base_url=self.__host, tls=False)
         self.__storage = Storage()
+
+    def __transform_env_to_dict(self, env: list[str]) -> dict[str, str]:
+        """
+        Transforma uma lista de variáveis de ambiente em um dicionário
+        """
+        env_dict = {}
+        keys_to_skip = ['PATH', 'VERSION', 'SERVER_PORT']
+
+        for env_var in env:
+            key, value = env_var.split('=')
+            if key in keys_to_skip:
+                continue
+            
+            env_dict[key] = value
+        return env_dict
 
     def __create_volume(self, name: str) -> str:
         """
@@ -126,7 +142,9 @@ class MinecraftManager:
         """
         try:
             image = server.base_image
-            server.port = self.__generate_port()
+            
+            if server.port is None:
+                server.port = self.__generate_port()
 
             logging.info('Criando servidor com a imagem %s', image)
 
@@ -141,7 +159,7 @@ class MinecraftManager:
                                                               }},
                                                               ports={'19132/udp': server.port},
                                                               name=server.name,
-                                                              environment=server.options
+                                                              environment=dict(server.options)
                                                               )
 
             logging.info('Servidor %s criado, id do container %s', container.name, container)
@@ -235,6 +253,10 @@ class MinecraftManager:
         Deleta um servidor
         """
         try:
+            if not self.__exist_container(container):
+                logging.error('Servidor não existe')
+                return False
+
             container.remove(v=True, force=True)
             logging.info('Servidor %s deletado', container.name)
             return True
@@ -263,6 +285,14 @@ class MinecraftManager:
         """
         command = f'send-command {command}'
 
+        if not self.__exist_container(container):
+            logging.error('Servidor não existe')
+            return None
+        
+        if not self.__is_running(container):
+            logging.error('Servidor não está rodando')
+            return None
+
         logging.info('Executando comando %s no servidor %s', command, container.name)
         container.exec_run(command)
         return self.get_last_log(container)
@@ -271,6 +301,15 @@ class MinecraftManager:
         """
         Define uma propriedade do servidor
         """
+
+        if not self.__exist_container(container):
+            logging.error('Servidor não existe')
+            return None
+        
+        if not self.__is_running(container):
+            logging.error('Servidor não está rodando')
+            return None
+
         exit_code, output = container.exec_run(f'send-command say {prop} definida para {value}',
                                                environment=[f'{prop}={value}'])
         logging.info(output)
@@ -384,3 +423,26 @@ class MinecraftManager:
 
         logging.info('Mundos do servidor %s: %s', container.name, worlds)
         return worlds
+
+    def update_server(self, container: IContainer) -> bool:
+        """
+        Atualiza um servidor
+        """
+        if not self.__exist_container(container):
+            logging.error('Servidor não existe')
+            return False
+    
+        server_config = { 
+            'name': container.name,
+            'port': self.__get_container_port(container),
+            'options': self.__transform_env_to_dict(container.attrs['Config']['Env'])
+        }
+
+        self.delete_server(container)
+
+        server = MinecraftBedRockServer(server_config['name'], 
+                                        server_config['options'],
+                                        server_config['port'])
+
+        created_server = self.create_server(server)
+        return created_server is not None

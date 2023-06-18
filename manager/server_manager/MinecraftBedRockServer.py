@@ -10,9 +10,9 @@ class MinecraftBedRockServer(_IMinecraftServer):
     """
     Classe para gerenciar um servidor Minecraft BedRock
     """
-    def __init__(self, name: str, options: Optional[dict]):
+    def __init__(self, name: str, options: Optional[dict], port: Optional[int] = None):
         self.__name = name
-        self.__port = 19132
+        self.__port = None if port is None else port
         self.__options = {'EULA': True} if options is None else options
 
     @staticmethod
