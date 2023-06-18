@@ -159,7 +159,8 @@ class MinecraftManager:
                                                               }},
                                                               ports={'19132/udp': server.port},
                                                               name=server.name,
-                                                              environment=dict(server.options)
+                                                              environment=dict(server.options),
+                                                              mem_limit='2G',
                                                               )
 
             logging.info('Servidor %s criado, id do container %s', container.name, container)
