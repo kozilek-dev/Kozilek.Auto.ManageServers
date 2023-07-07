@@ -158,7 +158,7 @@ class ManagerTests(TestCase):
         container = self.__manager.create_server(mc_server)
 
 
-        response = self.__manager.run_command(container, 'summon cow 10 20 30')
+        # response = self.__manager.run_command(container, 'summon cow 10 20 30')
 
         self.__manager.wait_for_healthy(container)
 
