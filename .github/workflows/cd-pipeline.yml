@@ -20,7 +20,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Echo hello world fi
-      run: |
-        echo 'hello world????'
+    
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v2
+      with:
+          name: mine-api
+          path: .
+          
+    - name: 'Deploy to Azure Web App'
+      uses: azure/webapps-deploy@v2
+      id: deploy-to-webapp
+      with:
+        app-name: 'minemanager'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}

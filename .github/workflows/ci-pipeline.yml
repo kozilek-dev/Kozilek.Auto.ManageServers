@@ -40,3 +40,11 @@ jobs:
         DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
         ST_CONNSTRING: ${{ secrets.ST_CONNSTRING }}
         ST_CONTAINER_NAME: ${{ secrets.ST_CONTAINER_NAME }}
+
+    - name: Upload artifact for deployment jobs
+      uses: actions/upload-artifact@v2
+      with:
+        name: mine-api
+        path: |
+          . 
+          !venv/
