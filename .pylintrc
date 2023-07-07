@@ -1,3 +1,3 @@
 [MASTER]
 good-names=IContainer,MinecraftManager,IMinecraftServer,MinecraftBedRockServer,MinecraftJavaServer,id,status,e
-disable=broad-except
+disable=broad-except,trailing-whitespace,consider-using-f-string,too-many-public-methods

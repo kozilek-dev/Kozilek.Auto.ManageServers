@@ -305,17 +305,18 @@ class MinecraftManager:
 
         if not self.__exist_container(container):
             logging.error('Servidor não existe')
-            return None
+            return False
         
         if not self.__is_running(container):
             logging.error('Servidor não está rodando')
-            return None
+            return False
 
         exit_code, output = container.exec_run(f'send-command say {prop} definida para {value}',
                                                environment=[f'{prop}={value}'])
         logging.info(output)
         logging.info(exit_code)
         self.restart_server(container)
+        return True
 
     def get_logs(self, container: IContainer):
         """
@@ -468,7 +469,6 @@ class MinecraftManager:
         cpu_usage = stats['cpu_stats']['cpu_usage']['total_usage']
         system_cpu_usage = stats['cpu_stats']['system_cpu_usage']
         memory_usage = stats['memory_stats']['usage']
-        network_usage = stats['networks']['eth0']['rx_bytes']
         risk = 0
 
         cpu_percent = cpu_usage / system_cpu_usage * 100
