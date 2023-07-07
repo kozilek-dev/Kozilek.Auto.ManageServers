@@ -82,6 +82,12 @@ async def get_performance(name: str):
     container = universal_manager.get_server(name)
     performance_stats = universal_manager.get_performance_stats(container)
 
+    if performance_stats is None:
+        return JSONResponse({
+            'resposta': 'Servidor não está rodando e/ou não possui estatísticas de desempenho', 
+            'executado_em': get_now()
+        }, 404)
+
     if container is None:
         return JSONResponse({
             'resposta': 'Servidor não encontrado', 
