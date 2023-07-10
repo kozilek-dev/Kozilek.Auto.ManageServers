@@ -342,7 +342,7 @@ class MinecraftManager:
 
     def backup_server(self, container: IContainer) -> str:
         """
-        Copia o diretório /data/ do container para um arquivo .tar e realiza o upload para o storage
+        Copia o diretório /data/worlds/ do container para um arquivo .tar e realiza o upload para o storage
         """
         name = container.name
         logging.info('Realizando backup do %s', name)

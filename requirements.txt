@@ -3,3 +3,7 @@ python-dotenv
 pylint
 azure-storage-blob
 fastapi[all]
+huey
+azure-storage
+uvicorn
+gunicorn
