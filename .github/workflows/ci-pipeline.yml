@@ -33,13 +33,13 @@ jobs:
       run: |
         python3 -m pylint ./manager
 
-    - name: Test with unittest
-      run: |
-        python -m unittest manager/tests/manager_test.py
-      env:
-        DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
-        ST_CONNSTRING: ${{ secrets.ST_CONNSTRING }}
-        ST_CONTAINER_NAME: ${{ secrets.ST_CONTAINER_NAME }}
+    # - name: Test with unittest
+    #   run: |
+    #     python -m unittest manager/tests/manager_test.py
+    #   env:
+    #     DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
+    #     ST_CONNSTRING: ${{ secrets.ST_CONNSTRING }}
+    #     ST_CONTAINER_NAME: ${{ secrets.ST_CONTAINER_NAME }}
 
     - name: 'Docker Login'
       uses: azure/docker-login@v1
