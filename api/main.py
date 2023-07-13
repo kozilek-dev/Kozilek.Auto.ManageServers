@@ -5,7 +5,7 @@ from api.routers import actions, commands, backups, logs
 
 
 async def not_found(request, exc):
-    message = {"mensagem": "Oops! Recurso não foi encontrado."}
+    message = {"mensagem": "Ih rapaz, deu xabu"}
     return JSONResponse(content=message, status_code=404)
 
 exceptions = {
