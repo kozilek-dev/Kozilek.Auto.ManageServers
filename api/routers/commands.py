@@ -10,13 +10,11 @@ router = APIRouter(
     tags=["commands"],
 )
 
-@lru_cache()
 def get_now() -> str:
     return datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
 
 universal_manager = MinecraftManager()
-
 
 
 class CommandRequest(BaseModel):

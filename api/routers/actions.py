@@ -14,7 +14,6 @@ router = APIRouter(
 universal_manager = MinecraftManager()
 
 
-@lru_cache()
 def get_now() -> str:
     return datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 

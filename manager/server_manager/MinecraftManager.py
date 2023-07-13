@@ -32,8 +32,13 @@ class MinecraftManager:
     def __init__(self):
         load_dotenv()
         self.__host = getenv('DOCKER_HOST')
-        self.__docker_instance: DockerClient = DockerClient(base_url=self.__host, tls=False)
+        self.__docker_instance = None
+        self.__ensure_instance()
         self.__storage = Storage()
+
+    def __ensure_instance(self) -> DockerClient:
+        if self.__docker_instance is None:
+            self.__docker_instance = DockerClient(base_url=self.__host, tls=False)
 
     def __transform_env_to_dict(self, env: list[str]) -> dict[str, str]:
         """
@@ -258,7 +263,7 @@ class MinecraftManager:
                 logging.error('Servidor não existe')
                 return False
 
-            container.remove(v=True, force=True)
+            container.remove(v=False, force=True)
             logging.info('Servidor %s deletado', container.name)
             return True
         except Exception as exception:
