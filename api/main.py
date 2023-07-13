@@ -13,7 +13,7 @@ exceptions = {
 }
 
 r = jobs.Runner()
-r.add_job(jobs.PurgeContainersJob(1, 0, 0))
+r.add_job(jobs.PurgeContainersJob(0, 10, 0))
 r.add_job(jobs.BackupContainersJob(2, 0, 0))
 r.add_job(jobs.UpdateContainersJob(12, 0, 0))
 r.start()

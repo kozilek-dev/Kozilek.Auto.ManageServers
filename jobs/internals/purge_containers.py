@@ -13,5 +13,5 @@ class PurgeContainersJob(IJob):
     def purge_servers(self):
         servers = universal_manager.get_all_servers()
         for server in servers:
-            if server.status == "exited":
+            if not universal_manager.is_healthy(server):
                 universal_manager.delete_server(server)
