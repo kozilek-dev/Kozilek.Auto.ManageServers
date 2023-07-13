@@ -14,7 +14,7 @@ router = APIRouter(
 universal_manager = MinecraftManager()
 
 
-@router.post("fazer/{name}")
+@router.post("/fazer/{name}")
 async def make_backup(name: str, background_tasks: BackgroundTasks):
     server = universal_manager.get_server(name)
     if server is None:
