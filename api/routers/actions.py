@@ -50,7 +50,7 @@ class ServerProperties(BaseModel):
 
 @router.post("/")
 async def create(server_properties: ServerProperties, background_tasks: BackgroundTasks):
-    server = MinecraftBedRockServer(server_properties.server_name, server_properties)
+    server = MinecraftBedRockServer(server_properties.server_name, server_properties, server_properties.server_port)
     background_tasks.add_task(universal_manager.create_server, server)
     return JSONResponse({
             'resposta': 'Servidor criado',
