@@ -22,7 +22,7 @@ r.start()
 
 app = FastAPI(exception_handlers=exceptions)
 
-origins = ["http://127.0.0.1:5500", "https://64ce1fdcbe3d0c23fe0eb0c9--gleeful-selkie-8484e4.netlify.app"]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
