@@ -289,7 +289,7 @@ class MinecraftManager:
         """
         Executa um comando no servidor
         """
-        command = f'send-command {command}'
+        command = f'send-command "{command}"'
 
         if not self.__exist_container(container):
             logging.error('Servidor não existe')
@@ -335,7 +335,7 @@ class MinecraftManager:
         """
         Retorna o último log do servidor
         """
-        penultimate_position = -2
+        penultimate_position = -1
 
         logs = self.get_logs(container)
         last_log = logs[penultimate_position]
@@ -488,4 +488,42 @@ class MinecraftManager:
             'memory_percent': float('{:.2f}'.format(memory_percent)),
             'saudavel': self.is_healthy(container),
             'risco': float('{:.2f}'.format(risk)),
+        }
+
+    def get_players(self, container: IContainer) -> list[str]:
+        if not self.__exist_container(container):
+            logging.error('Servidor não existe')
+            return None
+        
+        if not self.__is_running(container):
+            logging.error('Servidor não está rodando')
+            return None
+
+
+        def get_player_name(line: str, status: str) -> str:
+            separator = ','
+            player_name = line.split(status)[1].split(separator)[0].strip()
+            return player_name
+        
+        PLAYER_CONNECTED = "Player connected:"
+        PLAYER_DISCONNECTED = "Player disconnected:"
+        
+        players_connected = []
+        players_history = []
+        logs = self.get_logs(container)
+
+        for line in logs:
+            if PLAYER_CONNECTED in line:
+                player_name = get_player_name(line, PLAYER_CONNECTED)
+                players_connected.append(player_name)
+                if player_name not in players_history:
+                    players_history.append(player_name)
+            elif PLAYER_DISCONNECTED in line:
+                player_name = get_player_name(line, PLAYER_DISCONNECTED)
+                players_connected.remove(player_name)
+
+        return {
+            'historico': players_history, 
+            'conectados': players_connected, 
+            'conectados_qtd': len(players_connected)
         }

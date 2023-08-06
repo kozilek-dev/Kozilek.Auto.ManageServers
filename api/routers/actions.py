@@ -66,11 +66,14 @@ async def get(name: str):
             'resposta': 'Servidor não encontrado', 
             'executado_em': get_now()
         }, 404)
+    
+    players_connected = universal_manager.get_players(container)['conectados_qtd']
 
     return JSONResponse({
             'id':  container.id, 
             'porta': universal_manager.get_server_port(container),  
             'nome': container.name,
+            'conectados_qtd': players_connected,
             'status': container.status,
             'saudavel': universal_manager.is_healthy(container),
             'executado_em': get_now()
@@ -125,6 +128,7 @@ async def list():
         'nome': server.name, 
         'porta': universal_manager.get_server_port(server), 
         'saudavel': universal_manager.is_healthy(server),
+        'conectados_qtd': universal_manager.get_players(server)['conectados_qtd'],
         'status': server.status
     } for server in servers]
     return JSONResponse(
@@ -140,6 +144,16 @@ async def list_worlds(name: str):
     return JSONResponse(
         {
             'mundos': worlds, 
+            'executado_em': get_now()
+        }, 200)
+
+@router.get("/{name}/jogadores")
+async def list_worlds(name: str):
+    retrieved_server = universal_manager.get_server(name)
+    players = universal_manager.get_players(retrieved_server)
+    return JSONResponse(
+        {
+            'jogadores': players,
             'executado_em': get_now()
         }, 200)
 
