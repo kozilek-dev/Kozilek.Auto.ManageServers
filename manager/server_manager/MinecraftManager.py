@@ -492,7 +492,8 @@ class MinecraftManager:
 
     def get_players(self, container: IContainer) -> list[str]:
         """
-        Obtém os jogadores conectados atualmente e o histórico de todos jogadores que já passaram pelo servidor
+        Obtém os jogadores conectados atualmente e 
+        o histórico de todos jogadores que já passaram pelo servidor
         """
         if not self.__exist_container(container):
             logging.error('Servidor não existe')
